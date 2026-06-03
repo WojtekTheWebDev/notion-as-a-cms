@@ -121,7 +121,7 @@ npx changeset add --empty
 The command prints a line like:
 
 ```
-info /Users/.../notion-cms-boilerplate/.changeset/strict-boats-like.md
+info /Users/.../notion-as-a-cms/.changeset/strict-boats-like.md
 ```
 
 Parse that line to get the absolute path of the new file. (The filename is `<adjective>-<noun>-<verb>.md` from the Changesets CLI's built-in word list — don't try to predict or override it. The CLI also handles ordering and uniqueness for you.)
