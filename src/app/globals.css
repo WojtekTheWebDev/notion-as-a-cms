@@ -55,6 +55,8 @@
   --notion-bg-red: #faecec;
 
   --notion-background: #ffffff;
+
+  --font-body: var(--font-inter), system-ui, sans-serif;
 }
 
 /* Dark Theme */
@@ -87,6 +89,7 @@
 /* Body */
 body {
   @apply bg-notion-background text-notion-default;
+  font-family: var(--font-body);
 }
 
 /* Content */
@@ -147,4 +150,73 @@ li {
 /* Links */
 a {
   @apply text-notion-gray underline;
+}
+
+/* Editorial theme — opt-in via data-site-theme="editorial" (SITE_THEME env).
+   Overrides come last so they win over the base rules above at equal
+   specificity. Notion color annotations on content still resolve normally. */
+[data-site-theme="editorial"] {
+  --notion-background: #0e0e10;
+  --notion-default: #e7e2d6;
+
+  --font-body: var(--font-inter-tight), system-ui, sans-serif;
+  --font-display: var(--font-newsreader), Georgia, serif;
+}
+
+[data-site-theme="editorial"] .content {
+  max-width: 600px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 96px 48px;
+}
+
+@media (max-width: 768px) {
+  [data-site-theme="editorial"] .content {
+    padding: 64px 28px;
+  }
+}
+
+[data-site-theme="editorial"] h1 {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(3.25rem, 9vw, 5.25rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #f5efe1;
+  margin-top: 0;
+  margin-bottom: 2.5rem;
+}
+
+[data-site-theme="editorial"] h2,
+[data-site-theme="editorial"] h3 {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  color: #f5efe1;
+}
+
+[data-site-theme="editorial"] p,
+[data-site-theme="editorial"] li {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #b8b2a6;
+}
+
+[data-site-theme="editorial"] p {
+  margin: 0 0 1.5rem;
+}
+
+[data-site-theme="editorial"] a {
+  color: #e7e2d6;
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 1px;
+  transition: color 0.25s, border-color 0.25s;
+}
+
+[data-site-theme="editorial"] a:hover {
+  color: var(--accent);
 }

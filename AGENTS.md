@@ -41,6 +41,11 @@ Required in `.env` (see `.env.example`):
 - `NOTION_DATABASE_ID` — ID of the CMS database. Each row is a page.
 - `NOTION_IMAGE_HOSTNAME` — Hostname for `next/image` `remotePatterns` (defaults to `prod-files-secure.s3.us-west-2.amazonaws.com`). Used in `next.config.ts:8`.
 
+Optional (theming — see "Styling system"):
+
+- `SITE_THEME` — Style theme. `notion` (default) or `editorial`. Unset/unknown falls back to `notion`.
+- `SITE_ACCENT` — Accent color (hex) consumed by themes that support it (editorial link underlines/hover). Unset/invalid falls back to `#c9a66b`.
+
 Without `NOTION_SECRET` / `NOTION_DATABASE_ID`, every page renders 404 because the database query throws.
 
 ## How a request becomes a page
@@ -83,11 +88,11 @@ Renaming or removing any of these in Notion breaks pages — `getPropertyValue` 
 
 ## Styling system
 
-- Tailwind 3 with `content` globs covering `src/app/**` and `src/lib/notion/*` (`tailwind.config.ts:4-9`). If you put Tailwind classes outside those paths, they get purged.
-- **Two layered token systems** in `src/app/globals.css`:
-  - **Notion color tokens** (`--notion-*`, `--notion-bg-*`) — light + dark via `[data-theme="dark"]`. These map 1:1 to Notion's text/background colors and are surfaced as Tailwind classes (`text-notion-blue`, `bg-notion-bg-blue`, etc.) via `tailwind.config.ts:11-39`. `renderRichText` builds these class names dynamically from Notion annotations (`src/lib/notion/richText.tsx:116-122`).
-  - **Portfolio design tokens** (`--bg`, `--ink`, `--accent`, etc.) — drive the site shell (header/footer/typography in `globals.css`). These are *not* light/dark aware; the layout hard-codes `data-theme="dark"` (`src/app/layout.tsx:40`).
-- Global element styles (`h1`-`h3`, `p`, `a`, `li`) live in `globals.css` rather than per-component — atoms intentionally render bare elements (`<h1>{...}</h1>`) and let global CSS style them. Don't add per-component typography classes that fight the globals.
+- Tailwind 4, configured entirely in CSS (`src/app/globals.css`): `@import "tailwindcss"` + an `@theme` block. There is **no `tailwind.config.ts`**. Color utilities like `text-notion-blue` are declared as `--color-*` in `@theme`; dynamically-built class names (`renderRichText`) are kept alive by the `@source inline(...)` directive at the top of `globals.css` — extend that pattern rather than adding a config file.
+- **Notion color tokens** (`--notion-*`, `--notion-bg-*`) in `globals.css` — light (`:root`) + dark (`[data-theme="dark"]`). They map 1:1 to Notion's text/background colors and surface as Tailwind classes. `renderRichText` builds those class names from Notion annotations (`src/lib/notion/richText.tsx:116-122`).
+- **Theme system** (`src/lib/theme/index.ts`) — `getActiveThemeName()` resolves `SITE_THEME` (default `notion`) and `getAccent()` resolves `SITE_ACCENT` (default `#c9a66b`); both fall back safely. `layout.tsx` sets `data-site-theme` and injects `--accent` as an inline style var on `<html>`. The `notion` theme is the base globals; the `editorial` theme is a single `[data-site-theme="editorial"]` block at the end of `globals.css` overriding tokens, fonts, and `h1`/`p`/`a`/`.content` (it comes last so it wins at equal specificity). Notion content color annotations on a span still override the theme's element color — that's intended.
+- **Fonts**: loaded via `next/font/google` in `layout.tsx` as CSS variables (`--font-inter` for notion; `--font-inter-tight` + `--font-newsreader` for editorial). The semantic `--font-body` / `--font-display` vars pick per theme. Non-default fonts use `preload: false` so the notion site doesn't ship editorial fonts.
+- Global element styles (`h1`-`h3`, `p`, `a`, `li`) live in `globals.css` rather than per-component — atoms intentionally render bare elements (`<h1>{...}</h1>`) and let global CSS style them. Don't add per-component typography classes that fight the globals; theme overrides go in the `[data-site-theme=...]` block.
 
 ## Known limitations / gotchas
 
@@ -113,4 +118,5 @@ Renaming or removing any of these in Notion breaks pages — `getPropertyValue` 
 - Schema changes (renaming Notion DB columns, repurposing properties) — affects every deployment of this boilerplate.
 - Adding caching/revalidation — has correctness vs. freshness trade-offs the user should pick.
 - Adding client-side interactivity — moves data fetching surface around and risks leaking `NOTION_SECRET` if done wrong.
-- Changing the theme system or removing the hard-coded `data-theme="dark"` — the light-mode tokens exist but aren't wired up; the user may or may not want light mode.
+- Adding a new theme — extend `themeNames` in `src/lib/theme/index.ts`, add a `[data-site-theme="<name>"]` block in `globals.css`, and load any new fonts in `layout.tsx`. Themes that need a different page *structure* (header/footer chrome, multi-column) rather than just restyled blocks will need a per-theme shell component — that's a bigger change worth confirming first.
+- Removing the hard-coded `data-theme="dark"` — the light-mode tokens exist but aren't wired up; the user may or may not want light mode.
