@@ -44,9 +44,10 @@ export default function RootLayout({
       lang="en"
       data-theme="dark"
       data-site-theme={theme}
+      className={fontVariables}
       style={{ "--accent": accent } as React.CSSProperties}
     >
-      <body className={fontVariables}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
