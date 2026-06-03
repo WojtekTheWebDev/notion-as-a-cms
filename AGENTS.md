@@ -43,8 +43,8 @@ Required in `.env` (see `.env.example`):
 
 Optional (theming — see "Styling system"):
 
-- `SITE_THEME` — Style theme. `notion` (default) or `editorial`. Unset/unknown falls back to `notion`.
-- `SITE_ACCENT` — Accent color (hex) consumed by themes that support it (editorial link underlines/hover). Unset/invalid falls back to `#c9a66b`.
+- `SITE_THEME` — Style theme. `notion` (default) or `minimal`. Unset/unknown falls back to `notion`.
+- `SITE_ACCENT` — Accent color (hex) consumed by themes that support it (minimal link underlines/hover). Unset/invalid falls back to `#c9a66b`.
 
 Without `NOTION_SECRET` / `NOTION_DATABASE_ID`, every page renders 404 because the database query throws.
 
@@ -90,8 +90,8 @@ Renaming or removing any of these in Notion breaks pages — `getPropertyValue` 
 
 - Tailwind 4, configured entirely in CSS (`src/app/globals.css`): `@import "tailwindcss"` + an `@theme` block. There is **no `tailwind.config.ts`**. Color utilities like `text-notion-blue` are declared as `--color-*` in `@theme`; dynamically-built class names (`renderRichText`) are kept alive by the `@source inline(...)` directive at the top of `globals.css` — extend that pattern rather than adding a config file.
 - **Notion color tokens** (`--notion-*`, `--notion-bg-*`) in `globals.css` — light (`:root`) + dark (`[data-theme="dark"]`). They map 1:1 to Notion's text/background colors and surface as Tailwind classes. `renderRichText` builds those class names from Notion annotations (`src/lib/notion/richText.tsx:116-122`).
-- **Theme system** (`src/lib/theme/index.ts`) — `getActiveThemeName()` resolves `SITE_THEME` (default `notion`) and `getAccent()` resolves `SITE_ACCENT` (default `#c9a66b`); both fall back safely. `layout.tsx` sets `data-site-theme` and injects `--accent` as an inline style var on `<html>`. The `notion` theme is the base globals; the `editorial` theme is a single `[data-site-theme="editorial"]` block at the end of `globals.css` overriding tokens, fonts, and `h1`/`p`/`a`/`.content` (it comes last so it wins at equal specificity). Notion content color annotations on a span still override the theme's element color — that's intended.
-- **Fonts**: loaded via `next/font/google` in `layout.tsx` as CSS variables (`--font-inter` for notion; `--font-inter-tight` + `--font-newsreader` for editorial). The semantic `--font-body` / `--font-display` vars pick per theme. Non-default fonts use `preload: false` so the notion site doesn't ship editorial fonts.
+- **Theme system** (`src/lib/theme/index.ts`) — `getActiveThemeName()` resolves `SITE_THEME` (default `notion`) and `getAccent()` resolves `SITE_ACCENT` (default `#c9a66b`); both fall back safely. `layout.tsx` sets `data-site-theme` and injects `--accent` as an inline style var on `<html>`. The `notion` theme is the base globals; the `minimal` theme is a single `[data-site-theme="minimal"]` block at the end of `globals.css` overriding tokens, fonts, and `h1`/`p`/`a`/`.content` (it comes last so it wins at equal specificity). Notion content color annotations on a span still override the theme's element color — that's intended.
+- **Fonts**: loaded via `next/font/google` in `layout.tsx` as CSS variables (`--font-inter` for notion; `--font-inter-tight` + `--font-newsreader` for minimal). The semantic `--font-body` / `--font-display` vars pick per theme. Non-default fonts use `preload: false` so the notion site doesn't ship the minimal theme's fonts.
 - Global element styles (`h1`-`h3`, `p`, `a`, `li`) live in `globals.css` rather than per-component — atoms intentionally render bare elements (`<h1>{...}</h1>`) and let global CSS style them. Don't add per-component typography classes that fight the globals; theme overrides go in the `[data-site-theme=...]` block.
 
 ## Known limitations / gotchas

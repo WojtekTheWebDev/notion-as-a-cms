@@ -57,7 +57,7 @@ To start, simply use this [template](https://github.com/WojtekTheWebDev/notion-a
 
 Then, copy the *.env.example* and rename it to *.env*. Use your **Internal Integration Secret** and **Database ID** (from previous steps) as `NOTION_SECRET` and `NOTION_DATABASE_ID`.
 
-Optionally, set `SITE_THEME` to pick a style theme (`notion` — the default — or `editorial`) and `SITE_ACCENT` to a hex color used by themes that support it. Both fall back to safe defaults, so you can deploy the same codebase to multiple sites with different looks just by changing these two variables.
+Optionally, set `SITE_THEME` to pick a style theme (`notion` — the default — or `minimal`) and `SITE_ACCENT` to a hex color used by themes that support it. Both fall back to safe defaults, so you can deploy the same codebase to multiple sites with different looks just by changing these two variables.
 
 It’s all. 
 

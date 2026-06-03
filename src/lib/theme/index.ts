@@ -1,4 +1,4 @@
-const themeNames = ["notion", "editorial"] as const;
+const themeNames = ["notion", "minimal"] as const;
 
 export type ThemeName = (typeof themeNames)[number];
 
