@@ -79,7 +79,8 @@ body {
 /* Headings */
 h1,
 h2,
-h3 {
+h3,
+h4 {
   @apply mt-6 mb-4;
 }
 
@@ -93,6 +94,10 @@ h2 {
 
 h3 {
   @apply text-2xl font-bold;
+}
+
+h4 {
+  @apply text-xl font-bold;
 }
 
 /* Paragraphs */
@@ -122,4 +127,39 @@ li {
 /* Links */
 a {
   @apply text-notion-gray underline;
+}
+
+/* Divider */
+.divider {
+  @apply my-4 border-0 border-t;
+  border-color: var(--notion-bg-gray);
+}
+
+/* Link previews (bookmark / link_preview blocks) */
+.link-preview {
+  @apply flex flex-col gap-1 my-2 p-3 no-underline rounded-md border;
+  border-color: var(--notion-bg-gray);
+  color: var(--notion-default);
+}
+
+.link-preview:hover {
+  background-color: var(--notion-bg-gray);
+}
+
+.link-preview-title {
+  @apply text-sm font-medium truncate;
+  color: var(--notion-default);
+}
+
+.link-preview-description {
+  @apply text-xs overflow-hidden;
+  color: var(--notion-gray);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.link-preview-url {
+  @apply text-xs truncate mt-1;
+  color: var(--notion-gray);
 }

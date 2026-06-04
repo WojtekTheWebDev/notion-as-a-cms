@@ -13,7 +13,6 @@
 
 [data-site-theme="minimal"] .content {
   max-width: 760px;
-  min-height: 100vh;
   margin: 0;
   padding: clamp(64px, 12vh, 160px) clamp(28px, 8vw, 112px);
 }
@@ -30,7 +29,8 @@
 }
 
 [data-site-theme="minimal"] h2,
-[data-site-theme="minimal"] h3 {
+[data-site-theme="minimal"] h3,
+[data-site-theme="minimal"] h4 {
   font-family: var(--font-display);
   font-weight: 300;
   color: #f5efe1;
@@ -57,4 +57,20 @@
 
 [data-site-theme="minimal"] a:hover {
   border-bottom-color: #e7e2d6;
+}
+
+[data-site-theme="minimal"] .link-preview {
+  border: 1px solid #6b6658;
+  color: #e7e2d6;
+  padding: 0.75rem;
+}
+
+[data-site-theme="minimal"] .link-preview:hover {
+  background-color: transparent;
+  border-color: #e7e2d6;
+}
+
+[data-site-theme="minimal"] .divider {
+  margin: 2.5rem 0;
+  border-top-color: #6b6658;
 }
