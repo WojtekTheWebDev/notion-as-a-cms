@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { metaGenerator } from "@/lib/metadata";
-import { getAccent, getActiveThemeName } from "@/themes";
+import { getActiveThemeName } from "@/themes";
 import { fontVariables } from "@/themes/fonts";
 
 export const metadata: Metadata = {
@@ -14,7 +14,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const theme = getActiveThemeName();
-  const accent = getAccent();
 
   return (
     <html
@@ -22,7 +21,6 @@ export default function RootLayout({
       data-theme="dark"
       data-site-theme={theme}
       className={fontVariables}
-      style={{ "--accent": accent } as React.CSSProperties}
     >
       <body>{children}</body>
     </html>

@@ -57,7 +57,7 @@ To start, simply use this [template](https://github.com/WojtekTheWebDev/notion-a
 
 Then, copy the *.env.example* and rename it to *.env*. Use your **Internal Integration Secret** and **Database ID** (from previous steps) as `NOTION_SECRET` and `NOTION_DATABASE_ID`.
 
-Optionally, set `SITE_THEME` to pick a style theme (`notion` — the default — or `minimal`) and `SITE_ACCENT` to a hex color used by themes that support it. Both fall back to safe defaults, so you can deploy the same codebase to multiple sites with different looks just by changing these two variables.
+Optionally, set `SITE_THEME` to pick a style theme (`notion` — the default — or `minimal`). It falls back to `notion` when unset, so you can deploy the same codebase to multiple sites with different looks just by changing this one variable.
 
 It’s all. 
 
@@ -134,10 +134,10 @@ Using `src/themes/minimal/` as a template, touch these five places (replace `<na
      --font-display: var(--font-fraunces), Georgia, serif;
    }
    [data-site-theme="<name>"] h1 { font-family: var(--font-display); color: #f5efe1; }
-   [data-site-theme="<name>"] a  { border-bottom: 1px solid var(--accent); text-decoration: none; }
+   [data-site-theme="<name>"] a  { border-bottom: 1px solid #b4533a; text-decoration: none; }
    ```
 
-   Use `var(--accent)` for accent color so it stays driven by `SITE_ACCENT`. Only override what the design changes — everything else inherits the `notion` base.
+   Pick the accent/link color straight from the design and write it into the theme CSS. Only override what the design changes — everything else inherits the `notion` base.
 
 3. **`src/themes/index.ts`** — register the name:
 

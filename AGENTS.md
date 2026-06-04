@@ -44,7 +44,6 @@ Required in `.env` (see `.env.example`):
 Optional (theming — see "Styling system"):
 
 - `SITE_THEME` — Style theme. `notion` (default) or `minimal`. Unset/unknown falls back to `notion`.
-- `SITE_ACCENT` — Accent color (hex) consumed by themes that support it (minimal link underlines/hover). Unset/invalid falls back to `#c9a66b`.
 
 Without `NOTION_SECRET` / `NOTION_DATABASE_ID`, every page renders 404 because the database query throws.
 
@@ -90,9 +89,9 @@ Renaming or removing any of these in Notion breaks pages — `getPropertyValue` 
 
 - Tailwind 4, configured entirely in CSS. There is **no `tailwind.config.ts`**. `src/app/globals.css` is now thin: `@import "tailwindcss"`, the `@theme` color map, the `@source inline(...)` directive (keeps `renderRichText`'s dynamic `text-notion-*` / `bg-notion-*` class names alive), and `@import`s of the theme CSS files. Color utilities like `text-notion-blue` are declared as `--color-*` in `@theme` — extend that pattern rather than adding a config file.
 - **Themes live in `src/themes/`**, one self-contained directory per theme:
-  - `src/themes/index.ts` — selection: `themeNames`, `getActiveThemeName()` (resolves `SITE_THEME`, default `notion`), `getAccent()` (resolves `SITE_ACCENT`, default `#c9a66b`). Both fall back safely.
+  - `src/themes/index.ts` — selection: `themeNames` and `getActiveThemeName()` (resolves `SITE_THEME`, default `notion`, falls back safely).
   - `src/themes/<name>/<name>.css` — the theme's styles. `notion/notion.css` is the base: it defines the **Notion color tokens** (`--notion-*`, light `:root` + dark `[data-theme="dark"]`) and the bare element styles (`body`, `.content`, `h1`-`h3`, `p`, `li`, `a`, `.code`, `.equation`). Other themes (e.g. `minimal/minimal.css`) are a `[data-site-theme="<name>"]` block overriding tokens/fonts/elements. `globals.css` `@import`s them notion-first, so later themes win at equal specificity. Notion content color annotations on a span still override a theme's element color — that's intended.
-  - `src/themes/<name>/fonts.ts` — the theme's `next/font` loaders, each exposing a CSS variable. `src/themes/fonts.ts` aggregates them into `fontVariables`, which `layout.tsx` applies to `<html>` (alongside `data-site-theme` and the `--accent` inline var). A font is only downloaded when the active theme's CSS references its variable; non-default fonts use `preload: false`. The semantic `--font-body` / `--font-display` vars are what theme CSS points at the loaded fonts.
+  - `src/themes/<name>/fonts.ts` — the theme's `next/font` loaders, each exposing a CSS variable. `src/themes/fonts.ts` aggregates them into `fontVariables`, which `layout.tsx` applies to `<html>` (alongside `data-site-theme`). A font is only downloaded when the active theme's CSS references its variable; non-default fonts use `preload: false`. The semantic `--font-body` / `--font-display` vars are what theme CSS points at the loaded fonts.
 - Global element styles live in `notion/notion.css` (the base), not per-component — atoms render bare elements (`<h1>{...}</h1>`) and let theme CSS style them. Don't add per-component typography classes that fight this; theme-specific overrides go in that theme's `[data-site-theme=...]` block.
 
 ## Known limitations / gotchas

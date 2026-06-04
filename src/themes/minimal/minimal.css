@@ -50,11 +50,11 @@
 [data-site-theme="minimal"] a {
   color: #e7e2d6;
   text-decoration: none;
-  border-bottom: 1px solid var(--accent);
+  border-bottom: 1px solid #6b6658;
   padding-bottom: 1px;
-  transition: color 0.25s, border-color 0.25s;
+  transition: border-color 0.25s;
 }
 
 [data-site-theme="minimal"] a:hover {
-  color: var(--accent);
+  border-bottom-color: #e7e2d6;
 }

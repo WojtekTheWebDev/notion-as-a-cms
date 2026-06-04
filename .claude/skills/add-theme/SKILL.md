@@ -70,7 +70,7 @@ you'll set in Step 3.
 | Primary body text | `--notion-default` | Default ink for paragraphs/body. |
 | Heading color | `h1` (and `h2,h3`) `color` | Often brighter/warmer than body. |
 | Muted text | `p`/`li` `color` | If body text is dimmer than headings. |
-| Accent | `var(--accent)` | Don't hardcode if avoidable — it already comes from the `SITE_ACCENT` env var (default `#c9a66b`). Use `var(--accent)` for link underlines/hover so deployments can retune it. |
+| Accent / link color | element rules (e.g. `a` underline + hover) | The highlight color the design uses for links. Read it from the design and write it directly into the theme's CSS — there is no shared accent token. |
 | Display font | `--font-display` | The headline typeface. |
 | Body font | `--font-body` | Paragraph/UI typeface. |
 | Layout | `.content` | Column width, alignment (centered vs left), padding, vertical placement. |
@@ -142,10 +142,10 @@ elements that matter.
 
 [data-site-theme="<name>"] a {
   color: #e7e2d6;
-  border-bottom: 1px solid var(--accent);
+  border-bottom: 1px solid #b4533a; /* the design's accent/link color */
   text-decoration: none;
 }
-[data-site-theme="<name>"] a:hover { color: var(--accent); }
+[data-site-theme="<name>"] a:hover { color: #b4533a; }
 ```
 
 Only override what the design actually changes; everything you don't touch
@@ -195,8 +195,7 @@ both.
 
 1. **Static checks:** `npm run lint` and `npm run build`. Both must pass.
 2. **Visual check against the design:**
-   - Set `SITE_THEME=<name>` (and `SITE_ACCENT` if the design has a specific
-     accent) and start dev: `SITE_THEME=<name> npm run dev`.
+   - Set `SITE_THEME=<name>` and start dev: `SITE_THEME=<name> npm run dev`.
    - **Restart dev after editing `globals.css` or theme CSS.** Turbopack's dev
      server does not reliably hot-reload these — it will keep serving the old
      CSS, which looks exactly like "my theme isn't working." If a restart isn't
@@ -206,7 +205,7 @@ both.
      `scripts/screenshot.sh http://localhost:3000/ /tmp/theme.png`
    - Confirm the rendered HTML's `data-site-theme="<name>"` matches your CSS
      selector, the headline uses the intended (serif/sans) font, the palette
-     matches, and links carry the accent.
+     matches, and the links are styled as in the design.
    - Stop the dev server when done so it doesn't block the user's own
      `npm run dev`.
 
@@ -217,7 +216,7 @@ won't match the mockup's words — judge the *styling*, not the text.
 ## Step 5 — Report
 
 Tell the user: the theme name, the files you created/edited, how to activate it
-(`SITE_THEME=<name>`, plus `SITE_ACCENT` if relevant), and how the screenshot
+(`SITE_THEME=<name>`), and how the screenshot
 compares to the design. Flag any assumptions you made (font substitutions,
 guessed colors) so they can correct them. This is a user-visible change — offer
 to add a changeset (`/generate-changeset`) rather than running it unprompted.
