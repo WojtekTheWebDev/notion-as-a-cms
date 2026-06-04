@@ -1,0 +1,26 @@
+{
+  "skill_name": "add-theme",
+  "evals": [
+    {
+      "id": 0,
+      "name": "text-brief-dusk",
+      "prompt": "I want to add a new look to my notion-as-a-cms site. Call it 'dusk' — a deep charcoal background (almost black), soft lavender body text, and a bright coral accent on the links. The big page heading should be a bold geometric sans-serif. Center the content column. Wire it up so I can switch the site to it with an env var.",
+      "expected_output": "A new 'dusk' theme scaffolded under src/themes/dusk/ (dusk.css + fonts.ts), registered in src/themes/index.ts, imported in globals.css after notion, fonts added to the aggregator. Charcoal bg, lavender body, coral link accent, bold sans display heading, centered column. lint + build pass; renders with SITE_THEME=dusk.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "prototype-aurora",
+      "prompt": "Here's a design prototype I made — .claude/skills/add-theme/evals/fixtures/aurora-prototype.jsx. Turn it into a theme for the site so I can ship it.",
+      "expected_output": "An 'aurora' theme matching the prototype's explicit values: bg ~#0b1020, body ink ~#e6e8f0/muted ~#9aa3b2, accent ~#7c9cff, serif display (Playfair Display or close), Inter body, left-aligned column. Fully wired (dir, index.ts, globals.css, fonts aggregator) and builds.",
+      "files": [".claude/skills/add-theme/evals/fixtures/aurora-prototype.jsx"]
+    },
+    {
+      "id": 2,
+      "name": "image-paper",
+      "prompt": "Make a theme that matches this mockup: .claude/skills/add-theme/evals/fixtures/paper-mockup.png — that warm paper-and-ink editorial look. I'll deploy it to one of my sites.",
+      "expected_output": "A theme matching the mockup: warm cream/paper background, dark ink, terracotta accent on links, a serif display heading, centered column. Fully wired and builds; renders correctly via SITE_THEME.",
+      "files": [".claude/skills/add-theme/evals/fixtures/paper-mockup.png"]
+    }
+  ]
+}

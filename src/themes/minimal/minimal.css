@@ -1,0 +1,60 @@
+/* minimal theme — opt-in via data-site-theme="minimal" (SITE_THEME env).
+   Re-points the design tokens, fonts, and a few element rules at a single
+   centered serif column. Imported after notion.css so it wins at equal
+   specificity. Notion color annotations on content still resolve normally. */
+
+[data-site-theme="minimal"] {
+  --notion-background: #0e0e10;
+  --notion-default: #e7e2d6;
+
+  --font-body: var(--font-inter-tight), system-ui, sans-serif;
+  --font-display: var(--font-newsreader), Georgia, serif;
+}
+
+[data-site-theme="minimal"] .content {
+  max-width: 760px;
+  min-height: 100vh;
+  margin: 0;
+  padding: clamp(64px, 12vh, 160px) clamp(28px, 8vw, 112px);
+}
+
+[data-site-theme="minimal"] h1 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3.5rem, 10vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #f5efe1;
+  margin-top: 0;
+  margin-bottom: 3rem;
+}
+
+[data-site-theme="minimal"] h2,
+[data-site-theme="minimal"] h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  color: #f5efe1;
+}
+
+[data-site-theme="minimal"] p,
+[data-site-theme="minimal"] li {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #b8b2a6;
+}
+
+[data-site-theme="minimal"] p {
+  margin: 0 0 1.5rem;
+}
+
+[data-site-theme="minimal"] a {
+  color: #e7e2d6;
+  text-decoration: none;
+  border-bottom: 1px solid #6b6658;
+  padding-bottom: 1px;
+  transition: border-color 0.25s;
+}
+
+[data-site-theme="minimal"] a:hover {
+  border-bottom-color: #e7e2d6;
+}

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Themes: notion is the base/default; every other theme is imported after it
+   and overrides via [data-site-theme="<name>"]. Order = cascade priority. */
+@import "../themes/notion/notion.css";
+@import "../themes/minimal/minimal.css";
+
+/* Notion color utilities (text-notion-*, bg-notion-*) map to the runtime
+   tokens defined in the theme files above. */
 @theme {
   --color-notion-default: var(--notion-default);
   --color-notion-gray: var(--notion-gray);
@@ -29,122 +36,3 @@
 /* renderRichText emits these dynamically per Notion annotation color, so Tailwind can't
    detect them by scanning source. */
 @source inline("{bg,text}-notion-{default,gray,brown,orange,yellow,green,blue,purple,pink,red}");
-
-/* Light Theme */
-:root {
-  --notion-default: #373530;
-  --notion-gray: #787774;
-  --notion-brown: #976d57;
-  --notion-orange: #cc782f;
-  --notion-yellow: #c29343;
-  --notion-green: #548164;
-  --notion-blue: #487ca5;
-  --notion-purple: #8a67ab;
-  --notion-pink: #b35488;
-  --notion-red: #c4554d;
-
-  --notion-bg-default: #ffffff;
-  --notion-bg-gray: #f1f1ef;
-  --notion-bg-brown: #f3eeee;
-  --notion-bg-orange: #f8ecdf;
-  --notion-bg-yellow: #faf3dd;
-  --notion-bg-green: #eef3ed;
-  --notion-bg-blue: #e9f3f7;
-  --notion-bg-purple: #f6f3f8;
-  --notion-bg-pink: #f9f2f5;
-  --notion-bg-red: #faecec;
-
-  --notion-background: #ffffff;
-}
-
-/* Dark Theme */
-[data-theme="dark"] {
-  --notion-default: #d4d4d4;
-  --notion-gray: #9b9b9b;
-  --notion-brown: #a27763;
-  --notion-orange: #cb7b37;
-  --notion-yellow: #c19138;
-  --notion-green: #4f9768;
-  --notion-blue: #447acb;
-  --notion-purple: #865dbb;
-  --notion-pink: #ba4a78;
-  --notion-red: #be524b;
-
-  --notion-bg-default: #191919;
-  --notion-bg-gray: #252525;
-  --notion-bg-brown: #2e2724;
-  --notion-bg-orange: #36291f;
-  --notion-bg-yellow: #372e20;
-  --notion-bg-green: #242b26;
-  --notion-bg-blue: #1f282d;
-  --notion-bg-purple: #2a2430;
-  --notion-bg-pink: #2e2328;
-  --notion-bg-red: #332523;
-
-  --notion-background: #191919;
-}
-
-/* Body */
-body {
-  @apply bg-notion-background text-notion-default;
-}
-
-/* Content */
-.content {
-  @apply m-auto p-4;
-  max-width: 768px;
-}
-
-@media (max-width: 768px) {
-  .content {
-    @apply p-2;
-  }
-}
-
-/* Headings */
-h1,
-h2,
-h3 {
-  @apply mt-6 mb-4;
-}
-
-h1 {
-  @apply text-4xl font-bold;
-}
-
-h2 {
-  @apply text-3xl font-bold;
-}
-
-h3 {
-  @apply text-2xl font-bold;
-}
-
-/* Paragraphs */
-p {
-  @apply my-1;
-}
-
-/* Lists */
-li {
-  @apply my-1 ml-4;
-}
-
-.todo-list-item {
-  @apply flex items-center my-1
-}
-
-/* Code */
-.code {
-  @apply bg-notion-bg-gray text-notion-red px-1.5 py-0.5 rounded-md font-mono text-sm;
-}
-
-/* Equations */
-.equation {
-  @apply font-serif text-xl tracking-widest;
-}
-
-/* Links */
-a {
-  @apply text-notion-gray underline;
-}

@@ -1,22 +1,28 @@
 import type { Metadata } from "next";
-import { Inter } from 'next/font/google'
 import "./globals.css";
 import { metaGenerator } from "@/lib/metadata";
+import { getActiveThemeName } from "@/themes";
+import { fontVariables } from "@/themes/fonts";
 
 export const metadata: Metadata = {
   generator: metaGenerator,
 };
-
-const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const theme = getActiveThemeName();
+
   return (
-    <html lang="en" data-theme="dark">
-      <body className={inter.className}>{children}</body>
+    <html
+      lang="en"
+      data-theme="dark"
+      data-site-theme={theme}
+      className={fontVariables}
+    >
+      <body>{children}</body>
     </html>
   );
 }

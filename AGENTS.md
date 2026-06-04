@@ -41,6 +41,10 @@ Required in `.env` (see `.env.example`):
 - `NOTION_DATABASE_ID` — ID of the CMS database. Each row is a page.
 - `NOTION_IMAGE_HOSTNAME` — Hostname for `next/image` `remotePatterns` (defaults to `prod-files-secure.s3.us-west-2.amazonaws.com`). Used in `next.config.ts:8`.
 
+Optional (theming — see "Styling system"):
+
+- `SITE_THEME` — Style theme. `notion` (default) or `minimal`. Unset/unknown falls back to `notion`.
+
 Without `NOTION_SECRET` / `NOTION_DATABASE_ID`, every page renders 404 because the database query throws.
 
 ## How a request becomes a page
@@ -83,11 +87,12 @@ Renaming or removing any of these in Notion breaks pages — `getPropertyValue` 
 
 ## Styling system
 
-- Tailwind 3 with `content` globs covering `src/app/**` and `src/lib/notion/*` (`tailwind.config.ts:4-9`). If you put Tailwind classes outside those paths, they get purged.
-- **Two layered token systems** in `src/app/globals.css`:
-  - **Notion color tokens** (`--notion-*`, `--notion-bg-*`) — light + dark via `[data-theme="dark"]`. These map 1:1 to Notion's text/background colors and are surfaced as Tailwind classes (`text-notion-blue`, `bg-notion-bg-blue`, etc.) via `tailwind.config.ts:11-39`. `renderRichText` builds these class names dynamically from Notion annotations (`src/lib/notion/richText.tsx:116-122`).
-  - **Portfolio design tokens** (`--bg`, `--ink`, `--accent`, etc.) — drive the site shell (header/footer/typography in `globals.css`). These are *not* light/dark aware; the layout hard-codes `data-theme="dark"` (`src/app/layout.tsx:40`).
-- Global element styles (`h1`-`h3`, `p`, `a`, `li`) live in `globals.css` rather than per-component — atoms intentionally render bare elements (`<h1>{...}</h1>`) and let global CSS style them. Don't add per-component typography classes that fight the globals.
+- Tailwind 4, configured entirely in CSS. There is **no `tailwind.config.ts`**. `src/app/globals.css` is now thin: `@import "tailwindcss"`, the `@theme` color map, the `@source inline(...)` directive (keeps `renderRichText`'s dynamic `text-notion-*` / `bg-notion-*` class names alive), and `@import`s of the theme CSS files. Color utilities like `text-notion-blue` are declared as `--color-*` in `@theme` — extend that pattern rather than adding a config file.
+- **Themes live in `src/themes/`**, one self-contained directory per theme:
+  - `src/themes/index.ts` — selection: `themeNames` and `getActiveThemeName()` (resolves `SITE_THEME`, default `notion`, falls back safely).
+  - `src/themes/<name>/<name>.css` — the theme's styles. `notion/notion.css` is the base: it defines the **Notion color tokens** (`--notion-*`, light `:root` + dark `[data-theme="dark"]`) and the bare element styles (`body`, `.content`, `h1`-`h3`, `p`, `li`, `a`, `.code`, `.equation`). Other themes (e.g. `minimal/minimal.css`) are a `[data-site-theme="<name>"]` block overriding tokens/fonts/elements. `globals.css` `@import`s them notion-first, so later themes win at equal specificity. Notion content color annotations on a span still override a theme's element color — that's intended.
+  - `src/themes/<name>/fonts.ts` — the theme's `next/font` loaders, each exposing a CSS variable. `src/themes/fonts.ts` aggregates them into `fontVariables`, which `layout.tsx` applies to `<html>` (alongside `data-site-theme`). A font is only downloaded when the active theme's CSS references its variable; non-default fonts use `preload: false`. The semantic `--font-body` / `--font-display` vars are what theme CSS points at the loaded fonts.
+- Global element styles live in `notion/notion.css` (the base), not per-component — atoms render bare elements (`<h1>{...}</h1>`) and let theme CSS style them. Don't add per-component typography classes that fight this; theme-specific overrides go in that theme's `[data-site-theme=...]` block.
 
 ## Known limitations / gotchas
 
@@ -113,4 +118,5 @@ Renaming or removing any of these in Notion breaks pages — `getPropertyValue` 
 - Schema changes (renaming Notion DB columns, repurposing properties) — affects every deployment of this boilerplate.
 - Adding caching/revalidation — has correctness vs. freshness trade-offs the user should pick.
 - Adding client-side interactivity — moves data fetching surface around and risks leaking `NOTION_SECRET` if done wrong.
-- Changing the theme system or removing the hard-coded `data-theme="dark"` — the light-mode tokens exist but aren't wired up; the user may or may not want light mode.
+- Adding a new theme — create `src/themes/<name>/` with `<name>.css` (a `[data-site-theme="<name>"]` block) and `fonts.ts` (any `next/font` loaders), register the name in `src/themes/index.ts` (`themeNames`), `@import` the CSS in `globals.css` after `notion`, and add the theme's fonts to the aggregator in `src/themes/fonts.ts`. Themes that need a different page *structure* (header/footer chrome, multi-column) rather than just restyled blocks will need a per-theme shell component — that's a bigger change worth confirming first.
+- Removing the hard-coded `data-theme="dark"` — the light-mode tokens exist but aren't wired up; the user may or may not want light mode.

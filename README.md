@@ -57,6 +57,8 @@ To start, simply use this [template](https://github.com/WojtekTheWebDev/notion-a
 
 Then, copy the *.env.example* and rename it to *.env*. Use your **Internal Integration Secret** and **Database ID** (from previous steps) as `NOTION_SECRET` and `NOTION_DATABASE_ID`.
 
+Optionally, set `SITE_THEME` to pick a style theme (`notion` — the default — or `minimal`). It falls back to `notion` when unset, so you can deploy the same codebase to multiple sites with different looks just by changing this one variable.
+
 It’s all. 
 
 You can run `npm run dev`. 
@@ -95,3 +97,69 @@ For example, if you want to change the aspect ratio to 4:3, you can update the `
 ```
 
 This will ensure that all images maintain the new aspect ratio while being rendered.
+
+### Adding a new theme
+
+Themes restyle the **same Notion content** — they swap the palette, fonts, and a few element rules; they don't change the page structure. Each theme lives in its own folder under `src/themes/<name>/` and is activated per deployment with the `SITE_THEME` env var (unknown/empty falls back to `notion`). The repo ships with `notion` (the default) and `minimal`.
+
+#### Option A — let the agent do it (recommended)
+
+This repo bundles an **`add-theme`** skill for [Claude Code](https://claude.com/claude-code). Just point it at a design and ask — it scaffolds the theme, wires everything up, and verifies it builds and renders:
+
+```
+Add a theme based on this design: ./mockup.png
+```
+
+It also accepts a text brief (“warm cream background, serif headline, terracotta accent”), a code/markup prototype, or a URL/Figma link. The skill triggers on phrasing like “add/create a theme”, “make the site look like this”, or any mockup/screenshot you hand it. It follows the manual steps below for you and screenshots the result against your design.
+
+#### Option B — do it manually
+
+Using `src/themes/minimal/` as a template, touch these five places (replace `<name>` with your theme, lowercase, no spaces):
+
+1. **`src/themes/<name>/fonts.ts`** — load the theme’s fonts via `next/font` and export their CSS variables (use `preload: false` so other deployments don’t ship them):
+
+   ```ts
+   import { Fraunces } from "next/font/google";
+   const fraunces = Fraunces({ subsets: ["latin"], weight: ["400"], variable: "--font-fraunces", preload: false });
+   export const fontVariables = [fraunces.variable];
+   ```
+
+2. **`src/themes/<name>/<name>.css`** — the theme block. Scope everything to `[data-site-theme="<name>"]`, override the tokens, point the semantic font vars at your fonts, and restyle the elements you care about:
+
+   ```css
+   [data-site-theme="<name>"] {
+     --notion-background: #0e0e10;
+     --notion-default: #e7e2d6;
+     --font-body: var(--font-inter), system-ui, sans-serif;
+     --font-display: var(--font-fraunces), Georgia, serif;
+   }
+   [data-site-theme="<name>"] h1 { font-family: var(--font-display); color: #f5efe1; }
+   [data-site-theme="<name>"] a  { border-bottom: 1px solid #b4533a; text-decoration: none; }
+   ```
+
+   Pick the accent/link color straight from the design and write it into the theme CSS. Only override what the design changes — everything else inherits the `notion` base.
+
+3. **`src/themes/index.ts`** — register the name:
+
+   ```diff
+   - const themeNames = ["notion", "minimal"] as const;
+   + const themeNames = ["notion", "minimal", "<name>"] as const;
+   ```
+
+4. **`src/app/globals.css`** — import the theme CSS **after** `notion` (cascade order = priority):
+
+   ```diff
+     @import "../themes/notion/notion.css";
+     @import "../themes/minimal/minimal.css";
+   + @import "../themes/<name>/<name>.css";
+   ```
+
+5. **`src/themes/fonts.ts`** — add the theme’s fonts to the aggregator that’s applied to `<html>`:
+
+   ```diff
+   + import { fontVariables as nameFonts } from "./<name>/fonts";
+   - export const fontVariables = [...notionFonts, ...minimalFonts].join(" ");
+   + export const fontVariables = [...notionFonts, ...minimalFonts, ...nameFonts].join(" ");
+   ```
+
+Then set `SITE_THEME=<name>` and run `npm run dev`. Restart the dev server after editing `globals.css` or theme CSS — the Turbopack dev server doesn’t reliably hot-reload them (`rm -rf .next` if it stays stale). Note: a design that needs a different page *structure* (header/footer, multi-column) requires a per-theme layout component, which isn’t part of this CSS-only theming.
